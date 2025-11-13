@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Root vs Tendulkar – Runs Tracker</title>
+  <style>
+    :root {
+      --bg: #050708;
+      --card-bg: #111827;
+      --accent: #22c55e;
+      --accent-soft: #4ade80;
+      --accent-root-base: #38bdf8;
+      --accent-root-added: #f97316;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --border-subtle: #1f2937;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #0f172a 0, #020617 55%);
+      color: var(--text-main);
+    }
+
+    .app-container {
+      display: flex;
+      min-height: 100vh;
+      padding: 24px;
+      gap: 24px;
+    }
+
+    .panel {
+      background: linear-gradient(145deg, #020617, #020617, #020617);
+      border-radius: 18px;
+      border: 1px solid var(--border-subtle);
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.5);
+      padding: 20px 22px;
+    }
+
+    .panel-left {
+      flex: 1.4;
+      overflow: auto;
+      max-height: calc(100vh - 48px);
+    }
+
+    .panel-right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-height: calc(100vh - 48px);
+    }
+
+    h1 {
+      margin: 0 0 4px;
+      font-size: 1.6rem;
+      letter-spacing: 0.02em;
+    }
+
+    .subtitle {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .fixtures-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      gap: 8px;
+    }
+
+    .fixtures-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+
+    .header-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-pill {
+      border: 1px solid rgba(156, 163, 175, 0.5);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text-main);
+      border-radius: 999px;
+      font-size: 0.8rem;
+      padding: 4px 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+    }
+
+    .btn-pill:hover {
+      background: rgba(31, 41, 55, 0.95);
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .btn-pill span.plus {
+      font-size: 1rem;
+      color: var(--accent);
+    }
+
+    .btn-reset {
+      border-color: rgba(248, 113, 113, 0.6);
+      color: #fecaca;
+    }
+
+    .btn-reset:hover {
+      border-color: #f97373;
+    }
+
+    .fixtures-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-right: 6px;
+    }
+
+    .fixture-card {
+      border-radius: 14px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      background: radial-gradient(circle at top left, #020617 0, #020617 45%, #020617 100%);
+      padding: 10px 11px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .fixture-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .fixture-main {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .fixture-line-top {
+      font-size: 0.85rem;
+      color: var(--text-main);
+      font-weight: 500;
+    }
+
+    .fixture-line-bottom {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .fixture-opponent-pill {
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      color: var(--accent-soft);
+      background: rgba(15, 23, 42, 0.95);
+      white-space: nowrap;
+    }
+
+    .innings-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .innings-group {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .innings-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .innings-input {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      padding: 4px 6px;
+      font-size: 0.8rem;
+      background: #020617;
+      color: var(--text-main);
+      outline: none;
+    }
+
+    .innings-input:focus {
+      border-color: var(--accent-soft);
+      box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.3);
+    }
+
+    .summary-card {
+      background: linear-gradient(135deg, #020617, #020617);
+      border-radius: 14px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      padding: 12px 14px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .summary-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .summary-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .summary-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .distance-line {
+      font-size: 0.82rem;
+      color: var(--text-main);
+    }
+
+    .distance-highlight {
+      color: var(--accent-soft);
+      font-weight: 600;
+    }
+
+    .bar-section {
+      margin-top: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .bar-row-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 2px;
+    }
+
+    .bar-row-label span.name {
+      font-weight: 500;
+      color: var(--text-main);
+    }
+
+    .bar-container {
+      width: 100%;
+      height: 26px;
+      background: #020617;
+      border-radius: 999px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .bar-inner {
+      height: 100%;
+      border-radius: inherit;
+      transition: width 0.3s ease;
+    }
+
+    .bar-tendulkar {
+      background: linear-gradient(90deg, #16a34a, #22c55e);
+    }
+
+    /* Root stacked bar */
+    .bar-container-root {
+      display: flex;
+      position: relative;
+    }
+
+    .bar-root-base {
+      background: linear-gradient(90deg, #0369a1, #38bdf8);
+    }
+
+    .bar-root-added {
+      background: linear-gradient(90deg, #ea580c, #fb923c);
+    }
+
+    .bar-value-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .legend {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .legend-swatch {
+      width: 11px;
+      height: 11px;
+      border-radius: 999px;
+    }
+
+    .swatch-tendulkar {
+      background: linear-gradient(90deg, #16a34a, #22c55e);
+    }
+    .swatch-root-base {
+      background: linear-gradient(90deg, #0369a1, #38bdf8);
+    }
+    .swatch-root-added {
+      background: linear-gradient(90deg, #ea580c, #fb923c);
+    }
+
+    @media (max-width: 900px) {
+      .app-container {
+        flex-direction: column;
+      }
+      .panel-left, .panel-right {
+        max-height: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Left panel: fixtures -->
+    <div class="panel panel-left">
+      <h1>How Many More Runs Will Root Get?</h1>
+      <div class="subtitle">
+        Add his innings-by-innings scores for upcoming Tests and watch the bar chase Tendulkar’s total.
+      </div>
+
+      <div class="fixtures-header">
+        <div class="fixtures-title">Upcoming Fixtures</div>
+        <div class="header-buttons">
+          <button class="btn-pill btn-reset" id="resetBtn">
+            Reset innings
+          </button>
+          <button class="btn-pill" id="addFixtureBtn">
+            <span class="plus">+</span> Add Fixture
+          </button>
+        </div>
+      </div>
+
+      <div class="fixtures-list" id="fixturesList">
+        <!-- Initial fixtures injected by JS -->
+      </div>
+    </div>
+
+    <!-- Right panel: bars and summary -->
+    <div class="panel panel-right">
+      <div class="summary-card">
+        <div class="summary-top-row">
+          <div>
+            <div class="summary-title">Root vs Tendulkar – Test Runs</div>
+            <div class="summary-subtitle">Root’s current total plus your projected runs</div>
+          </div>
+        </div>
+        <div class="distance-line">
+          Tendulkar: <span id="tendulkarRunsLabel" class="distance-highlight"></span> runs
+          &nbsp;•&nbsp;
+          Root: <span id="rootRunsLabel" class="distance-highlight"></span> runs
+          &nbsp;•&nbsp;
+          Behind by <span id="behindLabel" class="distance-highlight"></span> runs
+        </div>
+
+        <div class="bar-section">
+          <!-- Tendulkar bar -->
+          <div>
+            <div class="bar-row-label">
+              <span class="name">Sachin Tendulkar</span>
+              <span class="bar-value-label" id="tendulkarPercentLabel"></span>
+            </div>
+            <div class="bar-container">
+              <div class="bar-inner bar-tendulkar" id="tendulkarBar"></div>
+            </div>
+          </div>
+
+          <!-- Root stacked bar -->
+          <div>
+            <div class="bar-row-label">
+              <span class="name">Joe Root</span>
+              <span class="bar-value-label" id="rootPercentLabel"></span>
+            </div>
+            <div class="bar-container bar-container-root">
+              <div class="bar-inner bar-root-base" id="rootBaseBar"></div>
+              <div class="bar-inner bar-root-added" id="rootAddedBar"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="legend">
+          <div class="legend-item">
+            <span class="legend-swatch swatch-tendulkar"></span> Tendulkar total
+          </div>
+          <div class="legend-item">
+            <span class="legend-swatch swatch-root-base"></span> Root current runs
+          </div>
+          <div class="legend-item">
+            <span class="legend-swatch swatch-root-added"></span> Projected runs added
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- Constants ---
+    const TENDULKAR_RUNS = 15921;
+    const ROOT_BASE_RUNS = 13543;
+
+    const fixturesData = [
+      {
+        date: "Nov 21, 2025",
+        tournament: "England in Australia",
+        venue: "Perth",
+        stadium: "Optus Stadium",
+        vs: "Australia"
+      },
+      {
+        date: "Dec 4, 2025",
+        tournament: "England in Australia",
+        venue: "Brisbane",
+        stadium: "Brisbane Cricket Ground",
+        vs: "Australia"
+      },
+      {
+        date: "Dec 17, 2025",
+        tournament: "England in Australia",
+        venue: "Adelaide",
+        stadium: "Adelaide Oval",
+        vs: "Australia"
+      },
+      {
+        date: "Dec 26, 2025",
+        tournament: "England in Australia",
+        venue: "Melbourne",
+        stadium: "Melbourne Cricket Ground",
+        vs: "Australia"
+      },
+      {
+        date: "Jan 4, 2026",
+        tournament: "England in Australia",
+        venue: "Sydney",
+        stadium: "Sydney Cricket Ground",
+        vs: "Australia"
+      },
+      {
+        date: "June 4, 2026",
+        tournament: "New Zealand in England",
+        venue: "Lord's",
+        stadium: "Lord's Cricket Ground",
+        vs: "New Zealand"
+      },
+      {
+        date: "June 17, 2026",
+        tournament: "New Zealand in England",
+        venue: "The Oval",
+        stadium: "The Kia Oval",
+        vs: "New Zealand"
+      },
+      {
+        date: "June 25, 2026",
+        tournament: "New Zealand in England",
+        venue: "Nottingham",
+        stadium: "Trent Bridge",
+        vs: "New Zealand"
+      },
+      {
+        date: "Aug 19, 2026",
+        tournament: "Pakistan in England",
+        venue: "Leeds",
+        stadium: "Headingley",
+        vs: "Pakistan"
+      },
+      {
+        date: "Aug 27, 2026",
+        tournament: "Pakistan in England",
+        venue: "Lord's",
+        stadium: "Lord's Cricket Ground",
+        vs: "Pakistan"
+      },
+      {
+        date: "Sep 9, 2026",
+        tournament: "Pakistan in England",
+        venue: "Birmingham",
+        stadium: "Edgbaston",
+        vs: "Pakistan"
+      }
+    ];
+
+    const fixturesListEl = document.getElementById("fixturesList");
+    const addFixtureBtn = document.getElementById("addFixtureBtn");
+    const resetBtn = document.getElementById("resetBtn");
+
+    const tendulkarBarEl = document.getElementById("tendulkarBar");
+    const rootBaseBarEl = document.getElementById("rootBaseBar");
+    const rootAddedBarEl = document.getElementById("rootAddedBar");
+
+    const tendulkarRunsLabel = document.getElementById("tendulkarRunsLabel");
+    const rootRunsLabel = document.getElementById("rootRunsLabel");
+    const behindLabel = document.getElementById("behindLabel");
+    const tendulkarPercentLabel = document.getElementById("tendulkarPercentLabel");
+    const rootPercentLabel = document.getElementById("rootPercentLabel");
+
+    // Initialise static Tendulkar bar and labels
+    function initBase() {
+      tendulkarBarEl.style.width = "100%";
+      tendulkarRunsLabel.textContent = TENDULKAR_RUNS.toLocaleString();
+      tendulkarPercentLabel.textContent = "Reference total (100%)";
+
+      updateBars(); // set Root base numbers
+    }
+
+    // Create a fixture card
+    function createFixtureCard(fixture) {
+      const card = document.createElement("div");
+      card.className = "fixture-card";
+
+      const header = document.createElement("div");
+      header.className = "fixture-header";
+
+      const mainText = document.createElement("div");
+      mainText.className = "fixture-main";
+
+      const lineTop = document.createElement("div");
+      lineTop.className = "fixture-line-top";
+      lineTop.textContent = `${fixture.date} • ${fixture.tournament}`;
+
+      const lineBottom = document.createElement("div");
+      lineBottom.className = "fixture-line-bottom";
+      lineBottom.textContent = `${fixture.venue} – ${fixture.stadium}`;
+
+      mainText.appendChild(lineTop);
+      mainText.appendChild(lineBottom);
+
+      const oppPill = document.createElement("div");
+      oppPill.className = "fixture-opponent-pill";
+      oppPill.textContent = `vs ${fixture.vs}`;
+
+      header.appendChild(mainText);
+      header.appendChild(oppPill);
+
+      const inningsRow = document.createElement("div");
+      inningsRow.className = "innings-row";
+
+      const inns1Group = document.createElement("div");
+      inns1Group.className = "innings-group";
+      const inns1Label = document.createElement("div");
+      inns1Label.className = "innings-label";
+      inns1Label.textContent = "Inns 1 runs";
+      const inns1Input = document.createElement("input");
+      inns1Input.type = "number";
+      inns1Input.min = "0";
+      inns1Input.placeholder = "0";
+      inns1Input.className = "innings-input";
+      inns1Input.addEventListener("input", updateBars);
+
+      inns1Group.appendChild(inns1Label);
+      inns1Group.appendChild(inns1Input);
+
+      const inns2Group = document.createElement("div");
+      inns2Group.className = "innings-group";
+      const inns2Label = document.createElement("div");
+      inns2Label.className = "innings-label";
+      inns2Label.textContent = "Inns 2 runs";
+      const inns2Input = document.createElement("input");
+      inns2Input.type = "number";
+      inns2Input.min = "0";
+      inns2Input.placeholder = "0";
+      inns2Input.className = "innings-input";
+      inns2Input.addEventListener("input", updateBars);
+
+      inns2Group.appendChild(inns2Label);
+      inns2Group.appendChild(inns2Input);
+
+      inningsRow.appendChild(inns1Group);
+      inningsRow.appendChild(inns2Group);
+
+      card.appendChild(header);
+      card.appendChild(inningsRow);
+
+      fixturesListEl.appendChild(card);
+    }
+
+    // Add initial fixtures
+    fixturesData.forEach(f => createFixtureCard(f));
+
+    // Add custom fixture
+    addFixtureBtn.addEventListener("click", () => {
+      const newFixture = {
+        date: "Custom date",
+        tournament: "Custom series",
+        venue: "Venue",
+        stadium: "Ground",
+        vs: "Opposition"
+      };
+      createFixtureCard(newFixture);
+    });
+
+    // Reset all innings inputs
+    resetBtn.addEventListener("click", () => {
+      const inputs = document.querySelectorAll(".innings-input");
+      inputs.forEach(inp => inp.value = "");
+      updateBars();
+    });
+
+    // Sum all innings inputs
+    function getAddedRuns() {
+      const inputs = document.querySelectorAll(".innings-input");
+      let total = 0;
+      inputs.forEach(inp => {
+        const val = parseInt(inp.value, 10);
+        if (!isNaN(val)) {
+          total += val;
+        }
+      });
+      return total;
+    }
+
+    // Update Root bars and labels based on inputs
+    function updateBars() {
+      const addedRuns = getAddedRuns();
+      const currentRootTotal = ROOT_BASE_RUNS + addedRuns;
+
+      const rootBasePct = Math.min((ROOT_BASE_RUNS / TENDULKAR_RUNS) * 100, 100);
+      const rootTotalPct = Math.min((currentRootTotal / TENDULKAR_RUNS) * 100, 100);
+      const rootAddedPct = Math.max(rootTotalPct - rootBasePct, 0);
+
+      rootBaseBarEl.style.width = rootBasePct + "%";
+      rootAddedBarEl.style.width = rootAddedPct + "%";
+
+      rootRunsLabel.textContent = currentRootTotal.toLocaleString();
+      rootPercentLabel.textContent = `${rootTotalPct.toFixed(1)}% of Tendulkar's total`;
+
+      const behind = Math.max(TENDULKAR_RUNS - currentRootTotal, 0);
+      behindLabel.textContent = behind.toLocaleString();
+    }
+
+    initBase();
+  </script>
+</body>
+</html>
