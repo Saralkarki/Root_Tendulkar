@@ -382,7 +382,7 @@
           &nbsp;•&nbsp;
           Root: <span id="rootRunsLabel" class="distance-highlight"></span> runs
           &nbsp;•&nbsp;
-          Behind by <span id="behindLabel" class="distance-highlight"></span> runs
+          <span id="differenceText">Behind by</span> <span id="behindLabel" class="distance-highlight"></span> runs
         </div>
 
         <div class="bar-section">
@@ -521,6 +521,7 @@
     const tendulkarRunsLabel = document.getElementById("tendulkarRunsLabel");
     const rootRunsLabel = document.getElementById("rootRunsLabel");
     const behindLabel = document.getElementById("behindLabel");
+    const differenceText = document.getElementById("differenceText");
     const tendulkarPercentLabel = document.getElementById("tendulkarPercentLabel");
     const rootPercentLabel = document.getElementById("rootPercentLabel");
 
@@ -534,7 +535,7 @@
     }
 
     // Create a fixture card
-    function createFixtureCard(fixture) {
+    function createFixtureCard(fixture, fixtureIndex) {
       const card = document.createElement("div");
       card.className = "fixture-card";
 
@@ -575,6 +576,15 @@
       inns1Input.min = "0";
       inns1Input.placeholder = "0";
       inns1Input.className = "innings-input";
+      
+      // Pre-populate and make readonly for first Ashes test (Perth)
+      if (fixtureIndex === 0) {
+        inns1Input.value = "0";
+        inns1Input.readOnly = true;
+        inns1Input.style.backgroundColor = "#1f2937";
+        inns1Input.style.color = "#9ca3af";
+      }
+      
       inns1Input.addEventListener("input", updateBars);
 
       inns1Group.appendChild(inns1Label);
@@ -590,6 +600,15 @@
       inns2Input.min = "0";
       inns2Input.placeholder = "0";
       inns2Input.className = "innings-input";
+      
+      // Pre-populate and make readonly for first Ashes test (Perth)
+      if (fixtureIndex === 0) {
+        inns2Input.value = "8";
+        inns2Input.readOnly = true;
+        inns2Input.style.backgroundColor = "#1f2937";
+        inns2Input.style.color = "#9ca3af";
+      }
+      
       inns2Input.addEventListener("input", updateBars);
 
       inns2Group.appendChild(inns2Label);
@@ -605,7 +624,7 @@
     }
 
     // Add initial fixtures
-    fixturesData.forEach(f => createFixtureCard(f));
+    fixturesData.forEach((f, index) => createFixtureCard(f, index));
 
     // Add custom fixture
     addFixtureBtn.addEventListener("click", () => {
@@ -616,7 +635,7 @@
         stadium: "Ground",
         vs: "Opposition"
       };
-      createFixtureCard(newFixture);
+      createFixtureCard(newFixture, -1); // -1 indicates custom fixture, not readonly
     });
 
     // Reset all innings inputs
@@ -654,8 +673,14 @@
       rootRunsLabel.textContent = currentRootTotal.toLocaleString();
       rootPercentLabel.textContent = `${rootTotalPct.toFixed(1)}% of Tendulkar's total`;
 
-      const behind = Math.max(TENDULKAR_RUNS - currentRootTotal, 0);
-      behindLabel.textContent = behind.toLocaleString();
+      const difference = currentRootTotal - TENDULKAR_RUNS;
+      if (difference >= 0) {
+        differenceText.textContent = "Ahead by";
+        behindLabel.textContent = difference.toLocaleString();
+      } else {
+        differenceText.textContent = "Behind by";
+        behindLabel.textContent = Math.abs(difference).toLocaleString();
+      }
     }
 
     initBase();
