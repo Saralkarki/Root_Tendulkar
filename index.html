@@ -638,10 +638,15 @@
       createFixtureCard(newFixture, -1); // -1 indicates custom fixture, not readonly
     });
 
-    // Reset all innings inputs
+    // Reset all innings inputs (but preserve readonly/completed matches)
     resetBtn.addEventListener("click", () => {
       const inputs = document.querySelectorAll(".innings-input");
-      inputs.forEach(inp => inp.value = "");
+      inputs.forEach(inp => {
+        // Only clear inputs that are not readonly (i.e., not completed matches)
+        if (!inp.readOnly) {
+          inp.value = "";
+        }
+      });
       updateBars();
     });
 
