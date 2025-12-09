@@ -585,6 +585,15 @@
         inns1Input.style.color = "#9ca3af";
       }
       
+      // Pre-populate and make readonly for second Ashes test (Brisbane)
+      if (fixtureIndex === 1) {
+        inns1Input.value = "138";
+        inns1Input.readOnly = true;
+        inns1Input.style.backgroundColor = "#1f2937";
+        inns1Input.style.color = "#9ca3af";
+      }
+      
+    
       inns1Input.addEventListener("input", updateBars);
 
       inns1Group.appendChild(inns1Label);
@@ -604,6 +613,14 @@
       // Pre-populate and make readonly for first Ashes test (Perth)
       if (fixtureIndex === 0) {
         inns2Input.value = "8";
+        inns2Input.readOnly = true;
+        inns2Input.style.backgroundColor = "#1f2937";
+        inns2Input.style.color = "#9ca3af";
+      }
+      
+      // Pre-populate and make readonly for second Ashes test (Brisbane)
+      if (fixtureIndex === 1) {
+        inns2Input.value = "15";
         inns2Input.readOnly = true;
         inns2Input.style.backgroundColor = "#1f2937";
         inns2Input.style.color = "#9ca3af";
