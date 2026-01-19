@@ -534,6 +534,21 @@
       updateBars(); // set Root base numbers
     }
 
+    // ============================================================
+    // PREPOPULATE FUNCTION - Allows easy reuse for setting fixture data
+    // ============================================================
+    /**
+     * Prepopulates a fixture with innings scores and makes them readonly
+     * @param {HTMLInputElement} input - The input element to prepopulate
+     * @param {number} runs - The runs value to set
+     */
+    function prepopulateInnings(input, runs) {
+      input.value = runs.toString();
+      input.readOnly = true;
+      input.style.backgroundColor = "#1f2937";
+      input.style.color = "#9ca3af";
+    }
+
     // Create a fixture card
     function createFixtureCard(fixture, fixtureIndex) {
       const card = document.createElement("div");
@@ -577,25 +592,7 @@
       inns1Input.placeholder = "0";
       inns1Input.className = "innings-input";
       
-      // Pre-populate and make readonly for first Ashes test (Perth)
-      if (fixtureIndex === 0) {
-        inns1Input.value = "0";
-        inns1Input.readOnly = true;
-        inns1Input.style.backgroundColor = "#1f2937";
-        inns1Input.style.color = "#9ca3af";
-      }
-      
-      // Pre-populate and make readonly for second Ashes test (Brisbane)
-      if (fixtureIndex === 1) {
-        inns1Input.value = "138";
-        inns1Input.readOnly = true;
-        inns1Input.style.backgroundColor = "#1f2937";
-        inns1Input.style.color = "#9ca3af";
-      }
-      
-    
       inns1Input.addEventListener("input", updateBars);
-
       inns1Group.appendChild(inns1Label);
       inns1Group.appendChild(inns1Input);
 
@@ -610,26 +607,48 @@
       inns2Input.placeholder = "0";
       inns2Input.className = "innings-input";
       
-      // Pre-populate and make readonly for first Ashes test (Perth)
-      if (fixtureIndex === 0) {
-        inns2Input.value = "8";
-        inns2Input.readOnly = true;
-        inns2Input.style.backgroundColor = "#1f2937";
-        inns2Input.style.color = "#9ca3af";
-      }
-      
-      // Pre-populate and make readonly for second Ashes test (Brisbane)
-      if (fixtureIndex === 1) {
-        inns2Input.value = "15";
-        inns2Input.readOnly = true;
-        inns2Input.style.backgroundColor = "#1f2937";
-        inns2Input.style.color = "#9ca3af";
-      }
-      
       inns2Input.addEventListener("input", updateBars);
-
       inns2Group.appendChild(inns2Label);
       inns2Group.appendChild(inns2Input);
+
+      // ============================================================
+      // USING PREPOPULATE FUNCTION HERE - Easy to add more fixtures
+      // ============================================================
+      // Pre-populate completed matches using the prepopulate function
+      if (fixtureIndex === 0) {
+        // Perth Test - Joe Root scored 0 and 8
+        prepopulateInnings(inns1Input, 0);
+        prepopulateInnings(inns2Input, 8);
+      }
+      
+      if (fixtureIndex === 1) {
+        // Brisbane Test - Joe Root scored 138 and 15
+        prepopulateInnings(inns1Input, 138);
+        prepopulateInnings(inns2Input, 15);
+      }
+       if (fixtureIndex === 2) {
+        // Brisbane Test - Joe Root scored 138 and 15
+        prepopulateInnings(inns1Input, 19);
+        prepopulateInnings(inns2Input, 39);
+      }
+       if (fixtureIndex === 3) {
+        // Brisbane Test - Joe Root scored 138 and 15
+        prepopulateInnings(inns1Input, 0);
+        prepopulateInnings(inns2Input, 15);
+      }
+       if (fixtureIndex === 4) {
+        // Brisbane Test - Joe Root scored 138 and 15
+        prepopulateInnings(inns1Input, 160);
+        prepopulateInnings(inns2Input, 6);
+      }
+
+      // ============================================================
+      // Add more fixtures here easily, for example:
+      // if (fixtureIndex === 2) {
+      //   prepopulateInnings(inns1Input, 120);
+      //   prepopulateInnings(inns2Input, 45);
+      // }
+      // ============================================================
 
       inningsRow.appendChild(inns1Group);
       inningsRow.appendChild(inns2Group);
